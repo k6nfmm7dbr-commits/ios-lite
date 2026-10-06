@@ -1,0 +1,118 @@
+# ============================================================
+#  iOS 瘦身 · iOS Lite  —— 全系统通用广告 / 追踪拦截
+#  ----------------------------------------------------------
+#  作用：跨 App 拦截广告 SDK 与统计 / 归因 / 崩溃上报域名，
+#        减少启动时的开屏广告等待、广告加载卡顿和后台 SDK 活动。
+#
+#  ⚠️ 先说清楚边界：这个模块**不能让手机变快**。
+#     它做不到降温、加不了内存、提不了 CPU 频率。
+#     它真正能改善的是「体感卡顿」——
+#     开屏广告那 3~5 秒的等待、信息流里广告加载时的掉帧，
+#     以及一堆统计 SDK 在启动时抢网络和主线程。
+#
+#     如果你手机卡，优先看 README 里的「真正该做的事」那一节，
+#     那里才是大头。本模块是补充，不是解药。
+#
+#  特性：零 MITM、零证书、零脚本 —— 只有域名规则。
+#        代理层本身越轻，对卡顿的机器越友好，所以本模块刻意
+#        不做任何需要解密流量的改写。
+#
+#  ⚠️ 规则顺序：客户端从上到下匹配第一条命中的规则。
+#     请把本模块规则放在任何宽泛直连规则之前。
+#     验证：请求记录 → 打开任意 App → 看是否显示 REJECT。
+# ============================================================
+
+name: "iOS 瘦身 · iOS Lite"
+description: "全系统通用：跨 App 拦截广告 SDK 与统计 / 归因 / 崩溃上报，减少开屏广告等待与广告加载卡顿。零 MITM、零证书。"
+author: "Minis"
+homepage: "https://github.com/k6nfmm7dbr-commits/ios-lite"
+manual: "https://github.com/k6nfmm7dbr-commits/ios-lite#readme"
+icon: "https://raw.githubusercontent.com/k6nfmm7dbr-commits/ios-lite/main/icon.png"
+
+
+rules:
+
+  # ── 广告 SDK：字节穿山甲 / Pangle ───────────────────────
+  # 国内 App 里铺得最广的广告 SDK 之一
+  - domain_suffix:
+      match: "pangle.cn"
+      policy: REJECT
+  - domain_suffix:
+      match: "pangle.io"
+      policy: REJECT
+  - domain_keyword:
+      match: "pangolin"
+      policy: REJECT
+  - domain_keyword:
+      match: "pglstatp-toutiao"
+      policy: REJECT
+
+  # ── 广告 SDK：腾讯优量汇 / 广点通 ───────────────────────
+  - domain_suffix:
+      match: "pgdt.gtimg.cn"
+      policy: REJECT
+  - domain_suffix:
+      match: "gdt.qq.com"
+      policy: REJECT
+  - domain_suffix:
+      match: "l.qq.com"
+      policy: REJECT
+  - domain:
+      match: "sdk.e.qq.com"
+      policy: REJECT
+
+  # ── 广告 SDK：百度联盟 ─────────────────────────────────
+  - domain_suffix:
+      match: "mobads.baidu.com"
+      policy: REJECT
+
+  # ── 广告 SDK：阿里妈妈 / 淘宝联盟 ───────────────────────
+  - domain_keyword:
+      match: "afpapi.alimama.com"
+      policy: REJECT
+  - domain_keyword:
+      match: "wgo.mmstat.com"
+      policy: REJECT
+
+  # ── 广告 SDK：国外（AppLovin / Amazon / DoubleClick）────
+  - domain_keyword:
+      match: "applovin"
+      policy: REJECT
+  - domain_keyword:
+      match: "adsystem"
+      policy: REJECT
+  - domain_keyword:
+      match: "doubleclick."
+      policy: REJECT
+
+  # ── 统计 / 归因 / 崩溃上报 ──────────────────────────────
+  # 这些 SDK 会在 App 启动时抢网络、解析 JSON、有时还预取图片，
+  # 是「点了图标要愣一下才进去」的常见原因之一。
+  - domain_keyword:
+      match: "umeng"                 # 友盟（国内铺得最广的统计 SDK）
+      policy: REJECT
+  - domain_keyword:
+      match: "appsflyer"             # 归因
+      policy: REJECT
+  - domain_keyword:
+      match: "adjust."               # 归因
+      policy: REJECT
+  - domain_keyword:
+      match: "crashlytics"           # 崩溃上报
+      policy: REJECT
+  - domain_suffix:
+      match: "bugly.qq.com"          # 腾讯崩溃上报
+      policy: REJECT
+
+
+# ── 故意没做的事 ────────────────────────────────────────────
+# ✗ 拦推送服务（getui.com / jpush.cn / igexin.com）
+#   → 这些不只是统计，还承担推送。拦了整个 App 的推送就没了。
+# ✗ 拦 HTTPDNS → 那只是让分流更准，跟卡顿无关。
+# ✗ 开 MITM 去拦开屏广告接口
+#   → 每个连接都要解密，反而给卡顿的机器加负担。
+#     而且各家开屏广告接口路径不一样，维护成本极高、收益极低。
+# ✗ 拦系统服务域名 → 会出各种玄学问题，得不偿失。
+#
+# 想要更彻底的全网追踪拦截，用 README 里说的「进阶：外挂规则集」
+# 方式引用社区维护的 Advertising / EasyPrivacy 规则集，不要手抄。

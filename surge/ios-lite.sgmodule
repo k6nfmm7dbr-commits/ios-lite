@@ -1,0 +1,56 @@
+#!name=iOS 瘦身 · iOS Lite
+#!desc=全系统通用：跨 App 拦截广告 SDK 与统计 / 归因 / 崩溃上报，减少开屏广告等待与广告加载卡顿。零 MITM、零证书。
+#!author=Minis
+#!icon=https://raw.githubusercontent.com/k6nfmm7dbr-commits/ios-lite/main/icon.png
+#!category=去广告
+#!tag=去广告,隐私,流畅度
+#!homepage=https://github.com/k6nfmm7dbr-commits/ios-lite
+#!date=2026-10-06
+# ------------------------------------------------------------
+# Surge 格式模块。Egern / Surge / Loon / Stash / Shadowrocket
+# 均可直接导入（Egern 官方支持 Surge 模块）。
+#
+# 需要转换到其它客户端？把本文件的 raw 链接丢进 Script-Hub：
+#   https://script-hub.nfdns.top
+#
+# ⚠️ 先说清楚边界：这个模块不能让手机变快。它做不到降温、
+#    加不了内存、提不了 CPU 频率。它改善的是「体感卡顿」——
+#    开屏广告那几秒等待、信息流广告加载掉帧、统计 SDK 抢启动。
+#    手机真卡的话，优先看 README 的「真正该做的事」。
+#
+# ⚠️ 本模块的 [Rule] 会合并进你的规则列表。请确认它排在更宽泛的
+#    直连规则之前，否则不会生效。
+# ------------------------------------------------------------
+
+[Rule]
+
+# ── 广告 SDK：字节穿山甲 / Pangle ──
+DOMAIN-SUFFIX,pangle.cn,REJECT
+DOMAIN-SUFFIX,pangle.io,REJECT
+DOMAIN-KEYWORD,pangolin,REJECT
+DOMAIN-KEYWORD,pglstatp-toutiao,REJECT
+
+# ── 广告 SDK：腾讯优量汇 / 广点通 ──
+DOMAIN-SUFFIX,pgdt.gtimg.cn,REJECT
+DOMAIN-SUFFIX,gdt.qq.com,REJECT
+DOMAIN-SUFFIX,l.qq.com,REJECT
+DOMAIN,sdk.e.qq.com,REJECT
+
+# ── 广告 SDK：百度联盟 ──
+DOMAIN-SUFFIX,mobads.baidu.com,REJECT
+
+# ── 广告 SDK：阿里妈妈 / 淘宝联盟 ──
+DOMAIN-KEYWORD,afpapi.alimama.com,REJECT
+DOMAIN-KEYWORD,wgo.mmstat.com,REJECT
+
+# ── 广告 SDK：国外 ──
+DOMAIN-KEYWORD,applovin,REJECT
+DOMAIN-KEYWORD,adsystem,REJECT
+DOMAIN-KEYWORD,doubleclick.,REJECT
+
+# ── 统计 / 归因 / 崩溃上报 ──
+DOMAIN-KEYWORD,umeng,REJECT
+DOMAIN-KEYWORD,appsflyer,REJECT
+DOMAIN-KEYWORD,adjust.,REJECT
+DOMAIN-KEYWORD,crashlytics,REJECT
+DOMAIN-SUFFIX,bugly.qq.com,REJECT

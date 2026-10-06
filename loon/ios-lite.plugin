@@ -1,0 +1,48 @@
+#!name = iOS 瘦身 · iOS Lite
+#!desc = 全系统通用：跨 App 拦截广告 SDK 与统计 / 归因 / 崩溃上报，减少开屏广告等待与广告加载卡顿。零 MitM、零证书。
+#!author = Minis
+#!icon = https://raw.githubusercontent.com/k6nfmm7dbr-commits/ios-lite/main/icon.png
+#!homepage = https://github.com/k6nfmm7dbr-commits/ios-lite
+#!tag = 去广告,隐私,流畅度
+#!loon_version = 3.2.4(787)
+# ------------------------------------------------------------
+# Loon 插件。规则会合并进你的规则列表，请确认它排在更宽泛的
+# 直连规则之前，否则不会生效。
+#
+# ⚠️ 这个模块不能让手机变快，只能减少「体感卡顿」：
+#    开屏广告等待、广告加载掉帧、统计 SDK 抢启动。
+#    手机真卡的话，优先看 README 的「真正该做的事」。
+# ------------------------------------------------------------
+
+[Rule]
+
+# ── 广告 SDK：字节穿山甲 / Pangle ──
+DOMAIN-SUFFIX,pangle.cn,REJECT
+DOMAIN-SUFFIX,pangle.io,REJECT
+DOMAIN-KEYWORD,pangolin,REJECT
+DOMAIN-KEYWORD,pglstatp-toutiao,REJECT
+
+# ── 广告 SDK：腾讯优量汇 / 广点通 ──
+DOMAIN-SUFFIX,pgdt.gtimg.cn,REJECT
+DOMAIN-SUFFIX,gdt.qq.com,REJECT
+DOMAIN-SUFFIX,l.qq.com,REJECT
+DOMAIN,sdk.e.qq.com,REJECT
+
+# ── 广告 SDK：百度联盟 ──
+DOMAIN-SUFFIX,mobads.baidu.com,REJECT
+
+# ── 广告 SDK：阿里妈妈 / 淘宝联盟 ──
+DOMAIN-KEYWORD,afpapi.alimama.com,REJECT
+DOMAIN-KEYWORD,wgo.mmstat.com,REJECT
+
+# ── 广告 SDK：国外 ──
+DOMAIN-KEYWORD,applovin,REJECT
+DOMAIN-KEYWORD,adsystem,REJECT
+DOMAIN-KEYWORD,doubleclick.,REJECT
+
+# ── 统计 / 归因 / 崩溃上报 ──
+DOMAIN-KEYWORD,umeng,REJECT
+DOMAIN-KEYWORD,appsflyer,REJECT
+DOMAIN-KEYWORD,adjust.,REJECT
+DOMAIN-KEYWORD,crashlytics,REJECT
+DOMAIN-SUFFIX,bugly.qq.com,REJECT
